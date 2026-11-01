@@ -80,7 +80,7 @@ from ..utils import (
 from .base import Method, typestr, ValueMutationNew, VariableTracker
 from .functions import invoke_and_store_as_constant
 from .lazy import LazyVariableTracker
-from .user_defined import UserDefinedObjectVariable
+from .user_defined import can_guard_class_function_code, UserDefinedObjectVariable
 
 
 if TYPE_CHECKING:
@@ -1479,7 +1479,7 @@ class UnspecializedNNModuleVariable(UserDefinedObjectVariable):
                 # This call skips resolve_type_attr, so guard the class
                 # function's __code__ here the same way (forward, or a
                 # user-defined __call__).
-                if source is not None:
+                if source is not None and can_guard_class_function_code(tx, fn):
                     fn_vt = variables.UserFunctionVariable.create_with_source(
                         fn, source
                     )
